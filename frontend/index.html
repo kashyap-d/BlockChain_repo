@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CertiChain – Certificate Verification DApp</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">◈</span>
+      <div>
+        <h1>CertiChain</h1>
+        <p class="tagline">Tamper-proof academic certificates on Ethereum</p>
+      </div>
+    </div>
+    <div class="wallet">
+      <span id="networkBadge" class="badge muted">No network</span>
+      <span id="roleBadge" class="badge muted">Guest</span>
+      <button id="connectBtn" class="btn primary">Connect MetaMask</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Contract setup -->
+    <section class="card setup">
+      <div class="row">
+        <label for="contractAddress">Contract address</label>
+        <input id="contractAddress" placeholder="0x… (paste the address from Remix after deploying)" spellcheck="false" />
+        <button id="loadBtn" class="btn">Load contract</button>
+      </div>
+      <p id="account" class="small mono">Wallet: not connected</p>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+      <div class="stat"><span class="label">Institution</span><span id="statInstitution" class="value">—</span></div>
+      <div class="stat"><span class="label">Certificates issued</span><span id="statIssued" class="value">—</span></div>
+      <div class="stat"><span class="label">Revoked</span><span id="statRevoked" class="value">—</span></div>
+      <div class="stat"><span class="label">Contract owner</span><span id="statOwner" class="value mono small">—</span></div>
+    </section>
+
+    <div class="grid">
+      <!-- Verify (anyone) -->
+      <section class="card">
+        <h2>Verify a certificate</h2>
+        <p class="hint">Anyone can verify. Read-only call – no gas, no MetaMask popup.</p>
+        <form id="verifyForm">
+          <input name="certId" placeholder="Certificate ID e.g. DIT-2026-CSE-001" />
+          <button class="btn primary" type="submit">Verify</button>
+        </form>
+        <div id="verifyResult" class="result hidden"></div>
+      </section>
+
+      <!-- Issue (issuer) -->
+      <section class="card">
+        <h2>Issue a certificate <span class="pill">Issuer</span></h2>
+        <form id="issueForm" class="stack">
+          <input name="certId" placeholder="Certificate ID (unique)" />
+          <input name="studentName" placeholder="Student name" />
+          <input name="regNumber" placeholder="Registration number" />
+          <input name="course" placeholder="Course / programme" />
+          <input name="grade" placeholder="Grade / CGPA" />
+          <button class="btn primary" type="submit">Issue certificate</button>
+        </form>
+      </section>
+
+      <!-- Revoke (issuer) -->
+      <section class="card">
+        <h2>Revoke a certificate <span class="pill">Issuer</span></h2>
+        <form id="revokeForm" class="stack">
+          <input name="certId" placeholder="Certificate ID" />
+          <input name="reason" placeholder="Reason (e.g. malpractice detected)" />
+          <button class="btn danger" type="submit">Revoke</button>
+        </form>
+      </section>
+
+      <!-- Admin (owner) -->
+      <section class="card">
+        <h2>Manage issuers <span class="pill">Owner</span></h2>
+        <form id="issuerForm" class="stack">
+          <input name="address" placeholder="Issuer wallet address 0x…" spellcheck="false" />
+          <div class="btn-row">
+            <button class="btn primary" type="submit" data-action="add">Add issuer</button>
+            <button class="btn" type="submit" data-action="remove">Remove issuer</button>
+            <button class="btn ghost" type="submit" data-action="check">Check</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <label class="force">
+      <input type="checkbox" id="forceSend" />
+      Testing mode: send the transaction even if it will revert (skips gas estimation so the
+      <em>failed</em> transaction is mined on-chain and visible in Ganache/MetaMask)
+    </label>
+
+    <!-- All certificates -->
+    <section class="card">
+      <div class="card-head">
+        <h2>All certificates on-chain</h2>
+        <button id="refreshBtn" class="btn ghost">Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Certificate ID</th><th>Student</th><th>Reg. no.</th><th>Course</th><th>Grade</th><th>Issued</th><th>Status</th></tr>
+          </thead>
+          <tbody id="certTable"><tr><td colspan="8" class="empty">Load the contract to see certificates.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Activity log -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Transaction log</h2>
+        <button id="clearLogBtn" class="btn ghost">Clear</button>
+      </div>
+      <ul id="log" class="log"></ul>
+    </section>
+  </main>
+
+  <footer>CSE4444 Blockchain Technology – Assignment 2 · Solidity + Ethers.js + MetaMask</footer>
+
+  <!-- Ethers.js v6 -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
